@@ -48,8 +48,6 @@ _BLIP-2_
 Auto-regressive-based 的代表 MMLLM 則是 [VILA](https://arxiv.org/abs/2312.07533)，這個方法較為直覺理解，即是把 Input Projector 視作一種 tokenizer，將 $F_X$ 再轉成 LLM 可接受的 token sequence。如下圖表示，visual tokens 和 textual tokens 可彈性放置以支援任意的 interleaved
 image-text 輸入。
 
-<a name="VILA"></a>
-
 ![VILA](assets/img/20240512/vila.png)
 _VILA_
 
@@ -68,7 +66,7 @@ IT 一樣有兩個步驟，Supervised Fine-Tuning（SFT）和 Reinforcement Lear
 RLHF 接著 SFT 後，根據模型的輸出，藉由 Natural Language Feedback（NLF）更進一步微調。Framework 可參考：[RL4F](https://arxiv.org/abs/2305.08844)、[LLaVA-RLHF](https://arxiv.org/abs/2309.14525) 和 [DRESS](https://arxiv.org/abs/2311.10081)。
 
 ### Training recipe without bells and whistles
-從 [VILA 圖的右半邊](#VILA) 可以看到，LLM 在 PT 和 IT的階段，並非 frozen 的狀態，主要是認為，雖然 frozen LLM 在 zero-shot 的表現不錯，但涉及到 few-shot， 也就是 in-context learning（ICL）的任務時就有差了。 也談到 interleaved image-text 比起 image-text pair 更能幫助模型，主要是後者的 caption 大多較為簡短，和原先 LLM 所訓練的 text-only corpus 的 distribution 有所落差，會造成模型 Catastrophic Forgetting，相比之下 interleaved image-text 通常 text 的資訊較為豐富。而實驗證明兩者融合更能增加資料的豐富度，達到更好的表現。PT 階段後，Joint SFT 提到除了使用含有 Image-Text 的 data fine-tuning 外，text-only corpus 也應加進去一起 SFT，不僅可有效避免 LLM 在 text-only 的任務上表現降低，也能協助其找回 instruction following 能力，提升在 visual task 的表現。
+從 VILA 圖的右半邊可以看到，LLM 在 PT 和 IT的階段，並非 frozen 的狀態，主要是認為，雖然 frozen LLM 在 zero-shot 的表現不錯，但涉及到 few-shot， 也就是 in-context learning（ICL）的任務時就有差了。 也談到 interleaved image-text 比起 image-text pair 更能幫助模型，主要是後者的 caption 大多較為簡短，和原先 LLM 所訓練的 text-only corpus 的 distribution 有所落差，會造成模型 Catastrophic Forgetting，相比之下 interleaved image-text 通常 text 的資訊較為豐富。而實驗證明兩者融合更能增加資料的豐富度，達到更好的表現。PT 階段後，Joint SFT 提到除了使用含有 Image-Text 的 data fine-tuning 外，text-only corpus 也應加進去一起 SFT，不僅可有效避免 LLM 在 text-only 的任務上表現降低，也能協助其找回 instruction following 能力，提升在 visual task 的表現。
 
 ## SOTA MMLLM
 ### Component Anatomy
